@@ -1,0 +1,114 @@
+{% extends "bootstrap/base.html" %}
+{% block title %}系统状态{% endblock %}
+{% block navbar %}
+    {% include 'navibar.html' %}
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+  <div class="page-header">
+    <form action="/submit" method="post" style="width:600px;" onsubmit="return checkform()">
+ <fieldset>
+    <legend>系统状态：</legend>
+    <div class="form-group">
+      <label class="col-form-label">系统名称：{{ hostname }}</label>
+    </div>
+    <div class="form-group">
+      <label class="col-form-label">本地ip地址：{{ localip }}</label>
+    </div>
+    <div class="form-group">
+      <label class="col-form-label" for="txt_wifiip">无线ip地址：</label>
+        <input type="text" id="txt_wifiip" class="form-control" name="txt_wifiip" value="{{ wifiip }}" />
+        <small id="wifiip_help" class="form-text text-muted">请输入正确的ip格式:192.168开头.</small>
+    </div>
+    <div class="form-group">
+      <label class="col-form-label" for="txt_ssid">无线SSID：</label>
+        <input type="text" id="txt_ssid" class="form-control" name="txt_ssid" value="{{ ssid }}" />
+    </div>
+    <div class="form-group">
+      <label class="col-form-label" for="txt_wifipasswd">无线密码：</label>
+        <input type="text" id="txt_wifipasswd" class="form-control" name="txt_wifipasswd" value="{{ wifipasswd }}" />
+        <small id="wifipasswd_help" class="form-text text-muted">密码的长度为8-16位.</small>
+    </div>
+     {% if isLogin %}
+    <input type="submit" class="btn btn-primary" value="提交" >
+     <input type="button" class="btn btn-primary" value="重启" onclick="return rest()" >
+     {% endif %}
+ </fieldset>
+
+    </form>
+      <script>
+          var jmz = {};
+            jmz.GetLength = function(str) {
+                ///<summary>获得字符串实际长度，中文2，英文1</summary>
+                ///<param name="str">要获得长度的字符串</param>
+                var realLength = 0, len = str.length, charCode = -1;
+                for (var i = 0; i < len; i++) {
+                    charCode = str.charCodeAt(i);
+                    if (charCode >= 0 && charCode <= 128) realLength += 1;
+                    else realLength += 2;
+                }
+                return realLength;
+            };
+            
+          function rest() {
+              if(confirm('是否真的重启设备？'))
+              {
+                    var rest = false;
+                    $.ajax({
+                        url: '/rest',
+                        data: '',
+                        type: 'POST',
+                        contentType: 'application/x-www-form-urlencoded',
+                        async: false,
+                        success: function (d) {
+                            var status = d.status;
+                            var msg = d.errmsg;
+                            if (status != undefined && status != '') {
+                                if (status == "-1") {
+                                    alert(msg);
+                                    rest = false;
+                                } else {
+                                    rest = true;
+                                }
+                            } else {
+                                alert(msg);
+                                rest = false;
+                            }
+                        }
+                    });
+                    return rest;
+              }
+
+          }
+          function checkform() {
+              var exp=/^192\.168\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;
+              var value=$("#txt_wifiip").val();
+              var reg = value.match(exp);
+              if(reg==null)
+              {
+                  alert("请输入正确的ip格式:192.168开头");
+                  return false;
+              }
+
+              if(jmz.GetLength($("#txt_ssid").val())==0)
+              {
+                  alert("无线SSID不能为空");
+                  $("#txt_ssid").focus();
+                  return false;
+              }
+              var passwdLength=jmz.GetLength($("#txt_wifipasswd").val());
+              if(passwdLength <8 || passwdLength > 16)
+              {
+                  alert("密码的长度为8-16位");
+                  $("#txt_wifipasswd").focus();
+                  return false;
+              }
+              return true;
+          }
+      </script>
+  </div>
+</div>
+
+{% endblock %}
