@@ -1,0 +1,25 @@
+{% extends "bootstrap/base.html" %}
+
+{% block title %}文本切词{% endblock %}
+{% block navbar %}
+    {% include 'navibar.html' %}
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+  <div class="page-header">
+      <form action="" method="post">
+           <fieldset>
+          <div class="form-group" style="width:600px;">
+                <label class="col-form-label" for="inputDefault">请输入文章内容：</label>
+                <input type="input" type="text" class="form-control" name="username" placeholder="内容贴在这里">
+          </div>
+               <input type="submit" value="分析" class="btn btn-primary">
+           </fieldset>
+
+      </form>
+  </div>
+</div>
+
+{% endblock %}
