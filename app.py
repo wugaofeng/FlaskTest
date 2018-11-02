@@ -5,6 +5,7 @@ from flask_wtf import FlaskForm   #导入继承父类
 from wtforms import StringField,PasswordField,SubmitField
 from wtforms.validators import Length,DataRequired
 import systemutils
+import textcut
 
 app = Flask(__name__)
 bootstrap = Bootstrap(app)
@@ -35,7 +36,13 @@ def systeminfo():
         wifiip = systemutils.get_ip_address('wlan0')
         ssid = systemutils.get_parameter_value('SSID')
         wifipasswd = systemutils.get_parameter_value('PASSPHRASE')
-        return render_template('system_stat.html',hostname=hostname,localip=localip,wifiip=wifiip,ssid=ssid,wifipasswd=wifipasswd,isLogin=isLogin)
+        return render_template('system_stat.html',
+                               hostname=hostname,
+                               localip=localip,
+                               wifiip=wifiip,
+                               ssid=ssid,
+                               wifipasswd=wifipasswd,
+                               isLogin=isLogin)
     else:
         pass
 
@@ -93,9 +100,17 @@ def AP_list():
     return render_template('ap_list.html', apList=apList)
 
 #文本内容切词
-@app.route('/cut')
+@app.route('/cut' , methods=['GET','POST'])
 def cut():
-    return render_template('content_cut.html')
+    if request.method == 'POST':
+        content = request.form['exampleTextarea']
+        return render_template('content_cut.html',
+                               origin_txt=content,
+                               cut_txt=textcut.extract_tags(content),
+                               cut_txt_with_weight=textcut.extract_tags_with_weight(content, topK=200),
+                               cut_txt_with_pseg=textcut.extract_tags_with_pseg(content))
+    else:
+        return render_template('content_cut.html')
 
 @app.route('/app/' , methods=['GET','POST'])
 def appurl():

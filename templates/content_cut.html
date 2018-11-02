@@ -11,15 +11,47 @@
   <div class="page-header">
       <form action="" method="post">
            <fieldset>
-          <div class="form-group" style="width:600px;">
-                <label class="col-form-label" for="inputDefault">请输入文章内容：</label>
-                <input type="input" type="text" class="form-control" name="username" placeholder="内容贴在这里">
+          <div class="form-group">
+                <label for="exampleTextarea">请输入文章内容：</label>
+                    <textarea class="form-control" id="exampleTextarea" name="exampleTextarea" rows="5" placeholder="内容贴在这里">{{ origin_txt }}</textarea>
           </div>
-               <input type="submit" value="分析" class="btn btn-primary">
+              <input type="button" value="清空" class="btn btn-primary" onclick="clearValue()"><input type="submit" value="分析" class="btn btn-primary">
            </fieldset>
-
+          <br />
+        <div class="jumbotron">
+          <h2 class="display-1">分词</h2>
+          <hr class="my-4">
+          <p>{{ cut_txt }}</p>
+        </div>
+          <br />
+        <div class="jumbotron">
+          <h2 class="display-1">词性</h2>
+          <hr class="my-4">
+          <p>
+              {% for word, flag in cut_txt_with_pseg %}
+                    {{ word }} {{ flag }}
+              {% endfor %}
+          </p>
+        </div>
+          <br />
+        <div class="jumbotron">
+          <h2 class="display-1">关键词比重</h2>
+          <hr class="my-4">
+          <p>
+              {% for tag in cut_txt_with_weight %}
+                    关键词: {{ tag[0] }} 权重: {{ tag[1] }} <br/>
+              {% endfor %}
+          </p>
+         <!--img src="../static/tmp/out2.jpg"-->
+        </div>
       </form>
   </div>
 </div>
+
+<script>
+function clearValue() {
+    document.getElementById("exampleTextarea").value='';
+}
+</script>
 
 {% endblock %}

@@ -2,18 +2,18 @@
 # encoding: utf-8
 
 import socket
-# import fcntl
-# import struct
+import fcntl
+import struct
 import os
 
 #获取网卡ip地址
 def get_ip_address(ifname):
-  # s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-  # return socket.inet_ntoa(fcntl.ioctl(
-  #   s.fileno(),
-  #   0x8915, # SIOCGIFADDR
-  #   struct.pack('256s', ifname[:15])
-  # )[20:24])
+  s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+  return socket.inet_ntoa(fcntl.ioctl(
+    s.fileno(),
+    0x8915, # SIOCGIFADDR
+    struct.pack('256s', ifname[:15])
+  )[20:24])
   return  ''
 
 #获取shell脚本执行结果列表
